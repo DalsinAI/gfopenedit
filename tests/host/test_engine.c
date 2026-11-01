@@ -455,9 +455,9 @@ static void test_syntax(const char *kdir)
         oe_kind_free(&kinds[i]);
 }
 
-/* Pattern find on a long line: the step budget is for the whole line, not
- * for each start, and #?#? costs what #? does. Before, "#?#?#?z" took
- * seconds on a 5000-character line and "found" the z near its end only. */
+/* Pattern find on a long line: a line's step budget grows with its length,
+ * not by OE_PAT_STEPS for every start, and #?#? costs what #? does. Before,
+ * these took 52 s on a 5000-character line. */
 static void test_find_pat_cost(void)
 {
     oe_doc d;
@@ -482,6 +482,28 @@ static void test_find_pat_cost(void)
     secs = (double)(clock() - c0) / CLOCKS_PER_SEC;
     CHECK(secs < 1.0);
     printf("pattern find on a %ld-character line: %.3f s\n", n, secs);
+    oe_doc_free(&d);
+    free(t);
+}
+
+/* A pattern that costs a step or a few at each start still finds a match
+ * however far along a long line it is: the budget grows with the line. */
+static void test_find_pat_far(void)
+{
+    oe_doc d;
+    long a, b, idx, n = 300000;
+    char *t = malloc(n + 3);
+    oe_doc_init(&d);
+    memset(t, 'a', n);
+    t[n] = 'z';
+    t[n + 1] = '\n';
+    t[n + 2] = 0;
+    load(&d, t);
+    CHECK(oe_find(&d, "z", OE_F_PAT, 0, 0, &a, &b) && a == n && b == n + 1);
+    CHECK(oe_find(&d, "(y|z)", OE_F_PAT, 0, 0, &a, &b) && a == n && b == n + 1);
+    CHECK(oe_find(&d, "(y|z)", OE_F_PAT, n + 1, 1, &a, &b) && a == n);
+    CHECK(oe_find_count(&d, "(y|z)", OE_F_PAT, n, &idx) == 1 && idx == 1);
+    CHECK(oe_find_count(&d, "[x-z]", OE_F_PAT, 0, &idx) == 1);
     oe_doc_free(&d);
     free(t);
 }
@@ -525,6 +547,7 @@ int main(int argc, char **argv)
     test_find();
     test_find_pat_cost();
     test_find_long_line();
+    test_find_pat_far();
     test_syntax(argc > 1 ? argv[1] : "kinds");
     printf("%d checks, %d failed\n", checks, fails);
     return fails ? 1 : 0;

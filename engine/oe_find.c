@@ -5,9 +5,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* A line's step budget for a pattern (oe_pat.h), without wrapping past
+ * LONG_MAX on a 32-bit long. */
+static long line_steps(long n)
+{
+    if (n > (0x7fffffffL - OE_PAT_STEPS) / OE_PAT_STEPS_PER_CHAR)
+        return 0x7fffffffL;
+    return OE_PAT_STEPS + n * OE_PAT_STEPS_PER_CHAR;
+}
+
 /* The first match in s[from..n) of a line; its end in *e, or -1. A pattern
- * spends *steps (one budget for the whole line, oe_pat.h) and finds no more
- * once it has run out. */
+ * spends at most OE_PAT_STEPS at each start (one that gives up there has no
+ * match there, as before), all out of the line's budget *steps; once that
+ * is spent the line has no more matches. */
 static long in_line(const char *s, long n, long from, const char *what, int wn, int flags, long *e, long *steps)
 {
     long i;
@@ -15,13 +25,16 @@ static long in_line(const char *s, long n, long from, const char *what, int wn, 
     for (i = from; i <= n; i++) {
         const char *end = NULL;
         if (flags & OE_F_PAT) {
-            end = oe_pat_at_steps(what, wn, s + i, s + n, nocase, steps);
-            if (*steps < 0)
-                return -1;              /* gave up */
+            long here = *steps < OE_PAT_STEPS ? *steps : OE_PAT_STEPS, left = here;
+            end = oe_pat_at_steps(what, wn, s + i, s + n, nocase, &left);
+            *steps -= here - left;
+            if (*steps <= 0)
+                return -1;              /* the line's budget is spent: gave up */
             if (end == s + i)
                 end = NULL;             /* an empty match is no match */
-            /* #? first: one that doesn't match here can't match further on. */
-            if (!end && oe_pat_any_first(what, wn))
+            /* #? first: one that doesn't match here (and didn't give up
+             * here) can't match further on. */
+            if (!end && left >= 0 && oe_pat_any_first(what, wn))
                 return -1;
         } else if (i + wn <= n) {
             int k;
@@ -47,7 +60,7 @@ static long in_line(const char *s, long n, long from, const char *what, int wn, 
 static int find_from(oe_doc *d, const char *what, int flags, long line, long from, long *starts, long *ends, int max)
 {
     long st = oe_buf_line_start(&d->buf, line), n = oe_buf_line_len(&d->buf, line), a, e;
-    long steps = OE_PAT_STEPS;
+    long steps = line_steps(n);
     const char *s;
     int wn = (int)strlen(what), k = 0;
     if (!wn || line < 0 || line >= oe_buf_lines(&d->buf))
@@ -81,7 +94,7 @@ int oe_find(oe_doc *d, const char *what, int flags, long from, int backward, lon
     for (k = 0; k <= lines; k++) {
         long l = backward ? (line - k + lines * 2) % lines : (line + k) % lines;
         long st = oe_buf_line_start(&d->buf, l), n = oe_buf_line_len(&d->buf, l), s0, e;
-        long steps = OE_PAT_STEPS;
+        long steps = line_steps(n);
         const char *s = oe_buf_span(&d->buf, st, n);
         if (!backward) {
             s0 = in_line(s, n, k == 0 ? from - st : 0, what, wn, flags, &e, &steps);
