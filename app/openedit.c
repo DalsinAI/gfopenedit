@@ -528,6 +528,26 @@ static long maxl(long a, long b)
     return a > b ? a : b;
 }
 
+/* IntuiTicks while dragging or while a count waits. */
+static void ticks_on(void)
+{
+    ULONG want = A.dragging || A.count_due ? IDCMP_INTUITICKS : 0;
+    if (A.win && (A.win->IDCMPFlags & IDCMP_INTUITICKS) != want)
+        ModifyIDCMP(A.win, (A.win->IDCMPFlags & ~IDCMP_INTUITICKS) | want);
+}
+
+/* The find bar's count goes over the whole document: after an edit it waits
+ * till typing stops for a few ticks, not once per key. */
+static void count_later(void)
+{
+    if (!A.active) {
+        oe_count_hits();
+        return;
+    }
+    A.count_due = 3;
+    ticks_on();
+}
+
 /* Draws what a change touched: a line, the rest of the view, or all. */
 static void refresh(const snap *s)
 {
@@ -570,7 +590,7 @@ static void refresh(const snap *s)
         oe_draw_tabs();
     oe_draw_status();
     if (A.find_on && edited)
-        oe_count_hits();
+        count_later();
 }
 
 void oe_after_edit(long old_lines, long old_top, int old_left, long old_caret_line)
@@ -1175,10 +1195,7 @@ static void set_dragging(int on)
 {
     A.dragging = on;
     ReportMouse(on, A.win);
-    if (on)
-        ModifyIDCMP(A.win, A.win->IDCMPFlags | IDCMP_INTUITICKS);
-    else
-        ModifyIDCMP(A.win, A.win->IDCMPFlags & ~IDCMP_INTUITICKS);
+    ticks_on();
 }
 
 static void drag_to(int mx, int my)
@@ -1357,6 +1374,10 @@ static void main_event(struct IntuiMessage *m)
     case IDCMP_ACTIVEWINDOW:
     case IDCMP_INACTIVEWINDOW:
         A.active = cl == IDCMP_ACTIVEWINDOW;
+        if (!A.active && A.count_due) {     /* no ticks while inactive */
+            oe_count_hits();
+            ticks_on();
+        }
         if (cur_doc())
             oe_draw_lines(oe_doc_line(cur_doc()), oe_doc_line(cur_doc()));
         break;
@@ -1375,6 +1396,9 @@ static void main_event(struct IntuiMessage *m)
     case IDCMP_INTUITICKS:
         if (A.dragging && (my < A.tx_y || my >= A.tx_y + A.rows * A.lh))
             drag_to(A.win->MouseX, A.win->MouseY);
+        if (A.count_due && --A.count_due == 0)
+            oe_count_hits();
+        ticks_on();
         break;
     case IDCMP_GADGETDOWN:
     case IDCMP_GADGETUP:

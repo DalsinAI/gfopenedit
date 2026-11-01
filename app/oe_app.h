@@ -94,6 +94,7 @@ typedef struct oe_app {
     int f_case, f_word, f_pat, f_alltabs;
     char find_text[128], repl_text[128];
     long hit_total, hit_index;
+    int count_due;                  /* ticks till the count is redone after an edit */
     int active;                     /* the window is active: the caret is solid */
     int dragging;
     long last_secs, last_mics;
