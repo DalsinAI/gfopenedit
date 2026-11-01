@@ -161,6 +161,28 @@ static void test_doc_io(void)
     oe_doc_free(&d);
 }
 
+/* The names a save goes through stay within 30 characters, in the file's
+ * drawer, and the .bak is never the file's own name. */
+static void test_save_names(void)
+{
+    char out[OE_PATH_MAX + 32];
+    const char *n30 = "Work:S/abcdefghijklmnopqrstuvwxyz0123";  /* 30 after S/ */
+    CHECK(oe_doc_beside("Work:Docs/a-long-file-name.txt", "OE_tmp1", out, sizeof out) &&
+          strcmp(out, "Work:Docs/OE_tmp1") == 0);
+    CHECK(oe_doc_beside("RAM:x", "OE_tmp2", out, sizeof out) && strcmp(out, "RAM:OE_tmp2") == 0);
+    CHECK(oe_doc_beside("notes", "OE_tmp3", out, sizeof out) && strcmp(out, "OE_tmp3") == 0);
+    CHECK(!oe_doc_beside("RAM:x", "OE_tmp2", out, 8));
+    CHECK(oe_doc_bak_name("S:Startup-Sequence", out, sizeof out) &&
+          strcmp(out, "S:Startup-Sequence.bak") == 0);
+    CHECK(oe_doc_bak_name(n30, out, sizeof out) &&
+          strcmp(out, "Work:S/abcdefghijklmnopqrstuvwxyz.bak") == 0 && strlen(out) - 7 == OE_NAME_MAX);
+    /* a 30-character name that ends in .bak itself */
+    CHECK(oe_doc_bak_name("S:abcdefghijklmnopqrstuvwxyz.BAK", out, sizeof out) &&
+          strcmp(out, "S:abcdefghijklmnopqrstuvwxy.bak") == 0);
+    CHECK(oe_doc_bak_name("S:abcdefghijklmnopqrstuvwxyz0123456789", out, sizeof out) &&
+          strlen(out) - 2 == OE_NAME_MAX);
+}
+
 static void type(oe_doc *d, const char *s)
 {
     for (; *s; s++) {
@@ -458,6 +480,7 @@ int main(int argc, char **argv)
 {
     test_buf();
     test_doc_io();
+    test_save_names();
     test_doc_edit();
     test_pat();
     test_find();

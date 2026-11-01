@@ -3,8 +3,9 @@
  * iffparse.
  *
  * Saving never leaves a half-written file: the text goes to a new file
- * beside the old one, and only when that is complete does it take the old
- * one's name. Files in S: and DEVS: keep the previous version as .bak.
+ * beside the old one, under a short name of its own (OE_tmpN), and only when
+ * that is complete does it take the old one's name. Files in S: and DEVS:
+ * keep the previous version as .bak.
  *
  * MIT, Copyright (c) 2026 AmigaChrome Team. */
 #include <exec/types.h>
@@ -57,6 +58,26 @@ static int keeps_backup(const char *path)
     return 0;
 }
 
+static unsigned tmp_counter;
+
+/* A free name in path's drawer for the new text. Short, so it fits the 30
+ * characters of an FFS name and is never cut back onto the file's own. */
+static int tmp_name(const char *path, char *out, int size)
+{
+    int i;
+    for (i = 0; i < 1000; i++) {
+        char nm[20];
+        BPTR l;
+        snprintf(nm, sizeof nm, "OE_tmp%u", ++tmp_counter);
+        if (!oe_doc_beside(path, nm, out, size))
+            return 0;
+        if (!(l = Lock((CONST_STRPTR)out, SHARED_LOCK)))
+            return IoErr() != ERROR_OBJECT_IN_USE;
+        UnLock(l);
+    }
+    return 0;
+}
+
 static void fault(char *err, int errlen, const char *what)
 {
     char why[80];
@@ -66,7 +87,7 @@ static void fault(char *err, int errlen, const char *what)
 
 int oe_save_file(oe_doc *d, const char *path, char *err, int errlen)
 {
-    char tmp[OE_PATH_MAX + 8], bak[OE_PATH_MAX + 8];
+    char tmp[OE_PATH_MAX + 32], bak[OE_PATH_MAX + 8], what[96];
     long n = oe_doc_save_size(d);
     char *bytes = malloc(n + 1);
     BPTR f, old;
@@ -78,9 +99,12 @@ int oe_save_file(oe_doc *d, const char *path, char *err, int errlen)
         snprintf(err, errlen, "Not enough memory to save");
         return 0;
     }
+    if (!tmp_name(path, tmp, sizeof tmp) || !oe_doc_bak_name(path, bak, sizeof bak)) {
+        snprintf(err, errlen, "Couldn't find a free name to save through");
+        free(bytes);
+        return 0;
+    }
     oe_doc_save_bytes(d, bytes);
-    snprintf(tmp, sizeof tmp, "%s.oe-new", path);
-    snprintf(bak, sizeof bak, "%s.bak", path);
 
     /* What the old file had, to keep. */
     if ((old = Lock((CONST_STRPTR)path, SHARED_LOCK))) {
@@ -130,7 +154,9 @@ int oe_save_file(oe_doc *d, const char *path, char *err, int errlen)
         }
     }
     if (!Rename((CONST_STRPTR)tmp, (CONST_STRPTR)path)) {
-        fault(err, errlen, "The text is saved as .oe-new, but couldn't take the file's name");
+        snprintf(what, sizeof what, "The text is saved as %s, but couldn't take the file's name",
+                 (char *)FilePart((STRPTR)tmp));
+        fault(err, errlen, what);
         return 0;
     }
     if (prot >= 0) {
