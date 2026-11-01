@@ -191,7 +191,7 @@ int oe_ask_file(int save, const char *title, char *path, int size)
         snprintf(file, sizeof file, "%s", fp);
     }
     if (!drawer[0])
-        lastdir_get("OpenEdit", drawer, sizeof drawer);     /* a new document: where the last was */
+        lastdir_get("GFOpenEdit", drawer, sizeof drawer);     /* a new document: where the last was */
     fr = AllocAslRequestTags(ASL_FileRequest, ASLFR_Window, (ULONG)A.win, ASLFR_SleepWindow, TRUE,
                              ASLFR_TitleText, (ULONG)title, ASLFR_InitialDrawer, (ULONG)drawer,
                              ASLFR_InitialFile, (ULONG)file, ASLFR_DoSaveMode, save, ASLFR_RejectIcons, TRUE,
@@ -201,7 +201,7 @@ int oe_ask_file(int save, const char *title, char *path, int size)
     if (AslRequest(fr, NULL) && fr->fr_File && fr->fr_File[0]) {
         snprintf(path, size, "%s", (char *)fr->fr_Drawer);
         ok = AddPart((STRPTR)path, fr->fr_File, size) != 0;
-        lastdir_put("OpenEdit", (const char *)fr->fr_Drawer);
+        lastdir_put("GFOpenEdit", (const char *)fr->fr_Drawer);
     }
     FreeAslRequest(fr);
     return ok;
@@ -313,7 +313,7 @@ static void load_kinds_from(const char *dir)
 
 void oe_load_kinds(void)
 {
-    load_kinds_from("ENVARC:OpenEdit/Kinds");
+    load_kinds_from("ENVARC:GFOpenEdit/Kinds");
     if (!A.nkinds)
         load_kinds_from("PROGDIR:Kinds");
     if (A.nkinds > 1)

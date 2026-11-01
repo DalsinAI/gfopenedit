@@ -1,4 +1,4 @@
-# OpenEdit colour kind: AmigaDOS scripts. MIT, Copyright (c) 2026 AmigaChrome Team.
+# GFOpenEdit colour kind: AmigaDOS scripts. MIT, Copyright (c) 2026 AmigaChrome Team.
 name      AmigaDOS script
 paths     (S:|SYS:S/|ENVARC:Sys/|DEVS:DOSDrivers/)#?
 files     (#?.(script|dos|bat)|(Startup-Sequence|User-Startup|Shell-Startup|Network-Startup|CLI-Startup)#?)
@@ -20,4 +20,4 @@ commands  FileNote Get GetEnv Info IPrefs Join LoadMonDrvs LoadResource LoadWB L
 commands  MakeLink Mount NewCLI NewShell Path Prompt Protect Quit Relabel Rename Resident Run
 commands  Search Set SetClock SetDate SetEnv SetFont SetKeyboard SetPatch Shell Skip Sort Stack
 commands  Status Type UnAlias UnSet UnSetEnv Version Wait WaitForPort Which Why List Lab Copy
-commands  ConClip MountList BindDrivers Install Format DiskCopy Format OpenEdit OpenFiles
+commands  ConClip MountList BindDrivers Install Format DiskCopy Format GFOpenEdit GFOpenFiles

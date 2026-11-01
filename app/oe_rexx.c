@@ -1,4 +1,4 @@
-/* oe_rexx: the OPENEDIT ARexx port, so other programs can drive OpenEdit.
+/* oe_rexx: the GFOPENEDIT ARexx port, so other programs can drive GFOpenEdit.
  *
  *   OPEN file [LINE n]   NEW            SAVE           SAVEAS file
  *   CLOSE [FORCE]        GOTO line [col]               TAB n

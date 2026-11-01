@@ -1,5 +1,5 @@
 /* oe_syntax: colour kinds. A kind is a small text file in
- * ENVARC:OpenEdit/Kinds/ that says which files it is for and how to colour
+ * ENVARC:GFOpenEdit/Kinds/ that says which files it is for and how to colour
  * them; adding one needs no rebuild. Plain C, tested on the host.
  *
  * A kind file, one setting a line (a line starting with # is a note):

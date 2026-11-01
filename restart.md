@@ -1,19 +1,19 @@
-# Restart: OpenEdit
+# Restart: GFOpenEdit
 
 _Written 6 October 2026 at about 23:55 UTC, while all work is paused on @SacredTrees's word (23:28 UTC). Read this first when work resumes; the newest capsule and the live PR list win if they disagree._
 
 ## What this repo is
 
-OpenEdit, the plain text editor for OpenUp in place of TextEdit and Ed: tabs, find and replace, syntax colours, Shell and ARexx use, safe saving. GadTools only.
+GFOpenEdit, the plain text editor for GFOpenUp in place of TextEdit and Ed: tabs, find and replace, syntax colours, Shell and ARexx use, safe saving. GadTools only.
 
 ## Where it stands
 
-Phase 1 is merged (#1) and ships in OpenUp 0.6.13; Main Discourse built it on the home PC (104,336 bytes, no warnings). The repo's default branch is main.
+Phase 1 is merged (#1) and ships in GFOpenUp 0.6.13; Main Discourse built it on the home PC (104,336 bytes, no warnings). The repo's default branch is main.
 
 ## Merged lately
 
-- #1 (672f0ef, 2026-10-06): OpenEdit phase 1: tabs, find and replace, colours, Shell and ARexx, safe save
-- #2 (c2df873, 2026-10-06): Credit who made OpenEdit: CONTRIBUTORS.md
+- #1 (672f0ef, 2026-10-06): GFOpenEdit phase 1: tabs, find and replace, colours, Shell and ARexx, safe save
+- #2 (c2df873, 2026-10-06): Credit who made GFOpenEdit: CONTRIBUTORS.md
 
 ## Open pull requests
 
@@ -21,7 +21,7 @@ Phase 1 is merged (#1) and ships in OpenUp 0.6.13; Main Discourse built it on th
 
 ## Next step
 
-1. Route text files to OpenEdit in OpenTypes and set ENV:EDITOR to "C:OpenEdit WAIT" (Main Discourse packaging).
+1. Route text files to GFOpenEdit in GFOpenTypes and set ENV:EDITOR to "C:GFOpenEdit WAIT" (Main Discourse packaging).
 2. Phase 2: split view, bookmarks, compare, macros.
 
 ## Waiting on @SacredTrees
@@ -30,7 +30,7 @@ Phase 1 is merged (#1) and ships in OpenUp 0.6.13; Main Discourse built it on th
 
 ## Who owns it
 
-OpenEdit thread; Main Discourse for packaging.
+GFOpenEdit thread; Main Discourse for packaging.
 
 ## Capsules
 

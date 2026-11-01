@@ -1,22 +1,22 @@
-# OpenEdit
+# GFOpenEdit
 
-The plain text editor for OpenUp. It replaces TextEdit and Ed for everyday
+The plain text editor for GFOpenUp. It replaces TextEdit and Ed for everyday
 editing: tabs, find and replace, syntax colours for scripts, Shell and ARexx
 use, and safe saving. GadTools only, so it needs nothing beyond AmigaOS 3.2.
 
-Runs on a 68040 with FPU under AmigaOS 3.2.3 with OpenUp, without OpenGPU.
+Runs on a 68040 with FPU under AmigaOS 3.2.3 with GFOpenUp, without GFOpenGPU.
 
 Status: phase 1 written, waiting on its first m68k build. See [DESIGN.md](DESIGN.md).
 
 New in 0.1.1 (10 October 2026): the window first opens at 800 x 600, in the
-middle of the space beside OpenDock (or all of that space on a smaller
+middle of the space beside GFOpenDock (or all of that space on a smaller
 screen), instead of filling the screen. A size you give it is kept.
 
 ## Building
 
-With the os32 stove and OpenGadTools checked out beside this repo:
+With the os32 stove and GFOpenGadTools checked out beside this repo:
 
-    ./build.sh                    # build/os3/OpenEdit and build/os3/Kinds/
+    ./build.sh                    # build/os3/GFOpenEdit and build/os3/Kinds/
     OGT=path/to/opengadtools ./build.sh
 
 The text engine (gap buffer, undo, find, patterns, colour kinds) is plain C and
@@ -24,21 +24,21 @@ has host tests: `tests/host/run.sh`.
 
 ## Installing
 
-- `C:OpenEdit`
-- the kind files into `ENVARC:OpenEdit/Kinds/` (OpenEdit also looks in
+- `C:GFOpenEdit`
+- the kind files into `ENVARC:GFOpenEdit/Kinds/` (GFOpenEdit also looks in
   `PROGDIR:Kinds/`)
-- `SetEnv SAVE EDITOR "C:OpenEdit WAIT"` so tools that call `$EDITOR` use it
+- `SetEnv SAVE EDITOR "C:GFOpenEdit WAIT"` so tools that call `$EDITOR` use it
 
 ## Using it from the Shell
 
-    OpenEdit [FILES ...] [LINE n] [WAIT] [READONLY] [NEW] [PUBSCREEN name]
+    GFOpenEdit [FILES ...] [LINE n] [WAIT] [READONLY] [NEW] [PUBSCREEN name]
 
-OpenEdit runs once. A second start hands its files to the running copy and
+GFOpenEdit runs once. A second start hands its files to the running copy and
 returns; with `WAIT` it returns when those tabs close.
 
 ## ARexx
 
-Port `OPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
+Port `GFOPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
 
 | Command | Does |
 |---|---|
@@ -57,7 +57,7 @@ Port `OPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
 
 ## Settings
 
-`ENV:OpenEdit/Settings` (Use) and `ENVARC:OpenEdit/Settings` (Save): font, tab
+`ENV:GFOpenEdit/Settings` (Use) and `ENVARC:GFOpenEdit/Settings` (Save): font, tab
 width, spaces for tabs, auto-indent, line numbers, current line, colours, and a
 colour per class for light and dark themes.
 
@@ -65,4 +65,4 @@ MIT licence, © 2026 AmigaChrome Team.
 
 ## Contributors
 
-OpenEdit is created and maintained by [SacredTrees](https://github.com/SacredTrees) with The AmigaChrome Team, copyright AmigaChrome Team. Everyone whose work it includes is credited in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
+GFOpenEdit is created and maintained by [SacredTrees](https://github.com/SacredTrees) with The AmiCradle Team, copyright AmigaChrome Team. Everyone whose work it includes is credited in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
