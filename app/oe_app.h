@@ -3,7 +3,7 @@
  * is GadTools, drawn in the GFOpenLook theme through GFOpenGadTools' drawing
  * code (linked in, no extra library).
  *
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 #ifndef OE_APP_H
 #define OE_APP_H
 

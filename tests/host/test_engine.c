@@ -1,5 +1,5 @@
 /* GFOpenEdit host tests: the engine (buffer, document, undo, find, patterns,
- * colour kinds). MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * colour kinds). MIT, Copyright (c) 2026 AmiCradle Team. */
 #include "oe_buf.h"
 #include "oe_doc.h"
 #include "oe_find.h"

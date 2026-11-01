@@ -10,9 +10,9 @@
  * returns at once; with WAIT it returns when those tabs close, so tools that
  * call $EDITOR keep working.
  *
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 
-static const char version[] __attribute__((used)) = "$VER: GFOpenEdit " "0.1.2" " (10.10.2026) MIT, Copyright (c) 2026 AmigaChrome Team";
+static const char version[] __attribute__((used)) = "$VER: GFOpenEdit " "0.1.2" " (10.10.2026) MIT, Copyright (c) 2026 AmiCradle Team";
 
 #include <exec/types.h>
 #include <exec/memory.h>
@@ -831,7 +831,7 @@ static void copy_sel(int cut)
 static void about(void)
 {
     oe_note("About GFOpenEdit", "GFOpenEdit " OE_VERSION " (" OE_DATE ")\nThe plain text editor for GFOpenUp.\n\n"
-                              "MIT licence, Copyright \xa9 2026 AmigaChrome Team.");
+                              "MIT licence, Copyright \xa9 2026 AmiCradle Team.");
 }
 
 void oe_command(int cmd)

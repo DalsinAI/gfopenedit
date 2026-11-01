@@ -61,8 +61,8 @@ Port `GFOPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
 width, spaces for tabs, auto-indent, line numbers, current line, colours, and a
 colour per class for light and dark themes.
 
-MIT licence, © 2026 AmigaChrome Team.
+MIT licence, © 2026 AmiCradle Team.
 
 ## Contributors
 
-GFOpenEdit is created and maintained by [SacredTrees](https://github.com/SacredTrees) with The AmiCradle Team, copyright AmigaChrome Team. Everyone whose work it includes is credited in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
+GFOpenEdit is created and maintained by [SacredTrees](https://github.com/SacredTrees) with The AmiCradle Team, copyright AmiCradle Team. Everyone whose work it includes is credited in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).

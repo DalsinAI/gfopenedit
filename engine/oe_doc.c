@@ -1,5 +1,5 @@
 /* oe_doc: one open file (oe_doc.h).
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 #include "oe_doc.h"
 #include "oe_pat.h"
 #include <stdio.h>

@@ -1,4 +1,4 @@
-# GFOpenEdit colour kind: makefiles. MIT, Copyright (c) 2026 AmigaChrome Team.
+# GFOpenEdit colour kind: makefiles. MIT, Copyright (c) 2026 AmiCradle Team.
 name      Makefile
 files     ((Makefile|makefile|GNUmakefile|SMakefile|DMakefile)#?|#?.(mk|mak))
 case      on
