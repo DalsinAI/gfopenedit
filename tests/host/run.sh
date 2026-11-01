@@ -1,6 +1,6 @@
 #!/bin/sh
 # GFOpenEdit host tests: the engine, built for the machine running them.
-# MIT, Copyright (c) 2026 AmigaChrome Team.
+# MIT, Copyright (c) 2026 AmiCradle Team.
 set -eu
 HERE=$(cd "$(dirname "$0")/../.." && pwd)
 OUT=${TMPDIR:-/tmp}/openedit-host-tests

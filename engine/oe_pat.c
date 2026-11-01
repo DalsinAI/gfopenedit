@@ -4,7 +4,7 @@
  * of the pattern, carried as a chain of what is left to match. Lines are
  * short, so the simple way is quick enough.
  *
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 #include "oe_pat.h"
 #include <string.h>
 

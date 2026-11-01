@@ -1,4 +1,4 @@
-# GFOpenEdit colour kind: 68000 assembler (Devpac, PhxAss, vasm). MIT, Copyright (c) 2026 AmigaChrome Team.
+# GFOpenEdit colour kind: 68000 assembler (Devpac, PhxAss, vasm). MIT, Copyright (c) 2026 AmiCradle Team.
 name      Assembler
 files     #?.(s|asm|i|a68|68k)
 case      off

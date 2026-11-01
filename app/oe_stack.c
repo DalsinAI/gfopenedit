@@ -1,5 +1,5 @@
 /* GFOpenEdit: run main on a stack of our own size.
- * MIT, Copyright (c) 2026 AmigaChrome Team.
+ * MIT, Copyright (c) 2026 AmiCradle Team.
  *
  * Run and a Shell give a program the Shell's stack (4 KB by default), and
  * libnix ignores __stack. The same helper as GFOpenFiles, which overran a

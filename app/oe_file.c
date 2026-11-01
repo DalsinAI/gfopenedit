@@ -7,7 +7,7 @@
  * that is complete does it take the old one's name. Files in S: and DEVS:
  * keep the previous version as .bak.
  *
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 #include <exec/types.h>
 #include <exec/memory.h>
 #include <dos/dos.h>

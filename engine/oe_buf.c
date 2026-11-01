@@ -1,5 +1,5 @@
 /* oe_buf: gap buffer and line index (oe_buf.h).
- * MIT, Copyright (c) 2026 AmigaChrome Team. */
+ * MIT, Copyright (c) 2026 AmiCradle Team. */
 #include "oe_buf.h"
 #include <stdlib.h>
 #include <string.h>
