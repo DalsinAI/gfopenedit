@@ -5,17 +5,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* The first match in s[from..n) of a line; its end in *e, or -1. */
-static long in_line(const char *s, long n, long from, const char *what, int wn, int flags, long *e)
+/* The first match in s[from..n) of a line; its end in *e, or -1. A pattern
+ * spends *steps (one budget for the whole line, oe_pat.h) and finds no more
+ * once it has run out. */
+static long in_line(const char *s, long n, long from, const char *what, int wn, int flags, long *e, long *steps)
 {
     long i;
     int nocase = !(flags & OE_F_CASE);
     for (i = from; i <= n; i++) {
         const char *end = NULL;
         if (flags & OE_F_PAT) {
-            end = oe_pat_at(what, wn, s + i, s + n, nocase);
+            end = oe_pat_at_steps(what, wn, s + i, s + n, nocase, steps);
+            if (*steps < 0)
+                return -1;              /* gave up */
             if (end == s + i)
                 end = NULL;             /* an empty match is no match */
+            /* #? first: one that doesn't match here can't match further on. */
+            if (!end && oe_pat_any_first(what, wn))
+                return -1;
         } else if (i + wn <= n) {
             int k;
             for (k = 0; k < wn; k++)
@@ -39,12 +46,13 @@ static long in_line(const char *s, long n, long from, const char *what, int wn, 
 int oe_find_line(oe_doc *d, const char *what, int flags, long line, long *starts, long *ends, int max)
 {
     long st = oe_buf_line_start(&d->buf, line), n = oe_buf_line_len(&d->buf, line), from = 0, a, e;
+    long steps = OE_PAT_STEPS;
     const char *s;
     int wn = (int)strlen(what), k = 0;
     if (!wn || line < 0 || line >= oe_buf_lines(&d->buf))
         return 0;
     s = oe_buf_span(&d->buf, st, n);
-    while (k < max && from <= n && (a = in_line(s, n, from, what, wn, flags, &e)) >= 0) {
+    while (k < max && from <= n && (a = in_line(s, n, from, what, wn, flags, &e, &steps)) >= 0) {
         starts[k] = a;
         ends[k] = e;
         k++;
@@ -67,9 +75,10 @@ int oe_find(oe_doc *d, const char *what, int flags, long from, int backward, lon
     for (k = 0; k <= lines; k++) {
         long l = backward ? (line - k + lines * 2) % lines : (line + k) % lines;
         long st = oe_buf_line_start(&d->buf, l), n = oe_buf_line_len(&d->buf, l), s0, e;
+        long steps = OE_PAT_STEPS;
         const char *s = oe_buf_span(&d->buf, st, n);
         if (!backward) {
-            s0 = in_line(s, n, k == 0 ? from - st : 0, what, wn, flags, &e);
+            s0 = in_line(s, n, k == 0 ? from - st : 0, what, wn, flags, &e, &steps);
             /* Back on the first line after wrapping: only before from. */
             if (s0 >= 0 && (k < lines || st + s0 < from)) {
                 *a = st + s0;
@@ -78,7 +87,7 @@ int oe_find(oe_doc *d, const char *what, int flags, long from, int backward, lon
             }
         } else {
             long best = -1, beste = 0, f = 0;
-            while (f <= n && (s0 = in_line(s, n, f, what, wn, flags, &e)) >= 0) {
+            while (f <= n && (s0 = in_line(s, n, f, what, wn, flags, &e, &steps)) >= 0) {
                 /* The caret's line: before from; again after wrapping: the rest. */
                 if (k == 0 && st + e > from)
                     break;

@@ -18,6 +18,19 @@
  * or NULL. nocase compares letters (ISO-8859-1) without case. */
 const char *oe_pat_at(const char *pat, int pn, const char *s, const char *se, int nocase);
 
+/* How many steps one search may take before it gives up (a pattern such as
+ * #?a#?a#?b costs the line's length to the power of its #?s). */
+#define OE_PAT_STEPS 200000L
+
+/* oe_pat_at, sharing one budget of *steps between calls: find spends one
+ * budget on all the start positions of a line, not one each. When it runs
+ * out (*steps < 0) the answer is NULL, and so is every later call's. */
+const char *oe_pat_at_steps(const char *pat, int pn, const char *s, const char *se, int nocase, long *steps);
+
+/* 1 if a pattern starts with #? or *: then no match at one start means none
+ * at any later start on the line either. */
+int oe_pat_any_first(const char *pat, int pn);
+
 /* Whole-string match, as MatchPattern. */
 int oe_pat_whole(const char *pat, const char *s, int nocase);
 

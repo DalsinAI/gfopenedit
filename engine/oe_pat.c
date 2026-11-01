@@ -18,7 +18,7 @@ typedef struct mctx {
     const char *se;
     int nocase;
     int anchored;               /* the match must reach se */
-    int steps;
+    long left;                  /* steps left before giving up */
 } mctx;
 
 int oe_lower(int c)
@@ -68,6 +68,15 @@ static const char *elem_end(const char *p, const char *pe)
     default:
         return p + 1;
     }
+}
+
+/* Past any more #? or * right after one: #?#? matches what #? does, and
+ * each one more would multiply the work by the line's length. */
+static const char *past_any(const char *p, const char *pe)
+{
+    while (p < pe && (*p == '*' || (*p == '#' && p + 1 < pe && p[1] == '?')))
+        p = elem_end(p, pe);
+    return p;
 }
 
 static int same(const mctx *m, int a, int b)
@@ -128,7 +137,7 @@ static const char *longer(const char *a, const char *b)
 static const char *match(mctx *m, const char *p, const char *pe, const char *s, const cont *k)
 {
     const char *e;
-    if (++m->steps > 200000)            /* a pathological pattern gives up */
+    if (--m->left < 0)                  /* a pathological pattern gives up */
         return NULL;
     if (p >= pe)
         return go_on(m, s, k);
@@ -139,7 +148,8 @@ static const char *match(mctx *m, const char *p, const char *pe, const char *s, 
     case '*': {
         /* #? : the longest first. */
         const char *t, *best = NULL;
-        for (t = m->se; t >= s; t--)
+        e = past_any(e, pe);
+        for (t = m->se; t >= s && m->left >= 0; t--)
             if ((best = match(m, e, pe, t, k)))
                 return best;
         return NULL;
@@ -185,7 +195,8 @@ static const char *match(mctx *m, const char *p, const char *pe, const char *s, 
         cont again;
         if (a < pe && *a == '?') {
             const char *t;
-            for (t = m->se; t >= s; t--)
+            ae = past_any(ae, pe);
+            for (t = m->se; t >= s && m->left >= 0; t--)
                 if ((more = match(m, ae, pe, t, k)))
                     return more;
             return NULL;
@@ -205,14 +216,30 @@ static const char *match(mctx *m, const char *p, const char *pe, const char *s, 
     }
 }
 
-const char *oe_pat_at(const char *pat, int pn, const char *s, const char *se, int nocase)
+const char *oe_pat_at_steps(const char *pat, int pn, const char *s, const char *se, int nocase, long *steps)
 {
     mctx m;
+    const char *e;
+    if (*steps < 0)
+        return NULL;
     m.se = se;
     m.nocase = nocase;
     m.anchored = 0;
-    m.steps = 0;
-    return match(&m, pat, pat + pn, s, NULL);
+    m.left = *steps;
+    e = match(&m, pat, pat + pn, s, NULL);
+    *steps = m.left;
+    return e;
+}
+
+const char *oe_pat_at(const char *pat, int pn, const char *s, const char *se, int nocase)
+{
+    long steps = OE_PAT_STEPS;
+    return oe_pat_at_steps(pat, pn, s, se, nocase, &steps);
+}
+
+int oe_pat_any_first(const char *pat, int pn)
+{
+    return pn > 0 && (pat[0] == '*' || (pn > 1 && pat[0] == '#' && pat[1] == '?'));
 }
 
 int oe_pat_whole(const char *pat, const char *s, int nocase)
@@ -223,7 +250,7 @@ int oe_pat_whole(const char *pat, const char *s, int nocase)
     m.se = s + sn;
     m.nocase = nocase;
     m.anchored = 1;
-    m.steps = 0;
+    m.left = OE_PAT_STEPS;
     e = match(&m, pat, pat + strlen(pat), s, NULL);
     return e == s + sn;
 }

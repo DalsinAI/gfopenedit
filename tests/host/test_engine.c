@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 static int fails, checks;
 
@@ -454,6 +455,37 @@ static void test_syntax(const char *kdir)
         oe_kind_free(&kinds[i]);
 }
 
+/* Pattern find on a long line: the step budget is for the whole line, not
+ * for each start, and #?#? costs what #? does. Before, "#?#?#?z" took
+ * seconds on a 5000-character line and "found" the z near its end only. */
+static void test_find_pat_cost(void)
+{
+    oe_doc d;
+    long a, b, idx, n = 5000;
+    char *t = malloc(n + 2);
+    clock_t c0;
+    double secs;
+    oe_doc_init(&d);
+    memset(t, 'a', n);
+    t[n - 1] = 'z';
+    t[n] = '\n';
+    t[n + 1] = 0;
+    load(&d, t);
+    c0 = clock();
+    CHECK(oe_find(&d, "#?#?#?z", OE_F_PAT, 0, 0, &a, &b) && a == 0 && b == n);
+    CHECK(oe_find_count(&d, "#?z", OE_F_PAT, 0, &idx) == 1);
+    t[n - 1] = 'a';
+    load(&d, t);
+    CHECK(!oe_find(&d, "#?a#?a#?b", OE_F_PAT, 0, 0, &a, &b));
+    CHECK(!oe_find(&d, "a#?a#?a#?b", OE_F_PAT, 0, 0, &a, &b));
+    CHECK(oe_find_count(&d, "#?#?#?z", OE_F_PAT, 0, &idx) == 0);
+    secs = (double)(clock() - c0) / CLOCKS_PER_SEC;
+    CHECK(secs < 1.0);
+    printf("pattern find on a %ld-character line: %.3f s\n", n, secs);
+    oe_doc_free(&d);
+    free(t);
+}
+
 int main(int argc, char **argv)
 {
     test_buf();
@@ -461,6 +493,7 @@ int main(int argc, char **argv)
     test_doc_edit();
     test_pat();
     test_find();
+    test_find_pat_cost();
     test_syntax(argc > 1 ? argv[1] : "kinds");
     printf("%d checks, %d failed\n", checks, fails);
     return fails ? 1 : 0;
