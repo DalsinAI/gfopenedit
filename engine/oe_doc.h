@@ -20,6 +20,7 @@ enum { OE_LEFT = 1, OE_RIGHT, OE_UP, OE_DOWN, OE_WORDL, OE_WORDR, OE_HOME, OE_EN
        OE_PGUP, OE_PGDN, OE_TOP, OE_BOTTOM };
 
 #define OE_PATH_MAX 256
+#define OE_NAME_MAX 30           /* an FFS name; longer may be cut or refused */
 #define OE_UNDO_MAX 4000
 
 typedef struct oe_undo {
@@ -63,6 +64,13 @@ long oe_doc_save_size(oe_doc *d);
 void oe_doc_save_bytes(oe_doc *d, char *out);
 void oe_doc_mark_saved(oe_doc *d);
 int oe_doc_modified(const oe_doc *d);
+
+/* Names a save goes through, in the file's own drawer. beside: path's drawer
+ * with name in place of the file's. bak_name: the file's name with ".bak",
+ * cut to OE_NAME_MAX so a file system that cuts long names can never make it
+ * the file's own name. Both return 0 when out is too small. */
+int oe_doc_beside(const char *path, const char *name, char *out, int size);
+int oe_doc_bak_name(const char *path, char *out, int size);
 
 long oe_doc_len(const oe_doc *d);
 long oe_doc_lines(const oe_doc *d);

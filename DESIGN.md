@@ -73,9 +73,11 @@ found. UTF-8 characters the font lacks show as a box and are saved back unchange
 
 ## Saving
 
-Write a temporary file beside the target, then rename it over the old one, so a
+Write a temporary file beside the target, under a short name of its own (`OE_tmpN`,
+never the file's name with something added, which a 30-character file system could
+refuse or cut back to the file's own name), then rename it over the old one, so a
 crash or a full disk never leaves a half-written file. Files in S: and DEVS: keep
-the previous version as `.bak`. Protection bits and comment are carried over; the date is the save's.
+the previous version as `.bak` (cut to 30 characters, never the file's own name). Protection bits and comment are carried over; the date is the save's.
 Closing a window with changes asks once for all tabs.
 
 ## Shell and ARexx

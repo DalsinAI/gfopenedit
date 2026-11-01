@@ -1,6 +1,8 @@
 /* oe_doc: one open file (oe_doc.h).
  * MIT, Copyright (c) 2026 AmigaChrome Team. */
 #include "oe_doc.h"
+#include "oe_pat.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -165,6 +167,39 @@ void oe_doc_mark_saved(oe_doc *d)
 int oe_doc_modified(const oe_doc *d)
 {
     return d->saved_at != d->uat;
+}
+
+/* Where an AmigaDOS path's file name starts: after its last ':' or '/'. */
+static const char *file_part(const char *path)
+{
+    const char *p = path, *s;
+    for (s = path; *s; s++)
+        if (*s == ':' || *s == '/')
+            p = s + 1;
+    return p;
+}
+
+int oe_doc_beside(const char *path, const char *name, char *out, int size)
+{
+    int dn = (int)(file_part(path) - path), nn = (int)strlen(name);
+    if (dn + nn + 1 > size)
+        return 0;
+    memcpy(out, path, dn);
+    memcpy(out + dn, name, nn + 1);
+    return 1;
+}
+
+int oe_doc_bak_name(const char *path, char *out, int size)
+{
+    const char *fp = file_part(path);
+    char nm[OE_NAME_MAX + 1];
+    int keep = (int)strlen(fp);
+    if (keep + 4 > OE_NAME_MAX)
+        keep = OE_NAME_MAX - 4;
+    snprintf(nm, sizeof nm, "%.*s.bak", keep, fp);
+    if (oe_stricmp(nm, fp) == 0)        /* a 30-character name ending in .bak */
+        snprintf(nm, sizeof nm, "%.*s.bak", keep - 1, fp);
+    return oe_doc_beside(path, nm, out, size);
 }
 
 long oe_doc_len(const oe_doc *d)
