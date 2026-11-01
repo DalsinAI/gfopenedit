@@ -227,13 +227,18 @@ char *oe_clip_read(long *n)
                 while (!ParseIFF(iff, IFFPARSE_SCAN)) {
                     struct ContextNode *cn = CurrentChunk(iff);
                     char *nt;
+                    LONG got;
                     if (!cn || cn->cn_Size <= 0)
                         continue;
                     if (!(nt = realloc(t, *n + cn->cn_Size + 1)))
                         break;
                     t = nt;
-                    *n += ReadChunkBytes(iff, t + *n, cn->cn_Size);
+                    got = ReadChunkBytes(iff, t + *n, cn->cn_Size);
+                    if (got > 0)
+                        *n += got;
                     t[*n] = 0;
+                    if (got < 0)            /* an IFFERR_: keep what came before */
+                        break;
                 }
             }
             CloseIFF(iff);

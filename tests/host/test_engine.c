@@ -486,6 +486,36 @@ static void test_find_pat_cost(void)
     free(t);
 }
 
+/* More than 64 matches on one line: all counted, all replaced, even when
+ * the replacement holds the text searched for. */
+static void test_find_long_line(void)
+{
+    oe_doc d;
+    long idx, n;
+    char t[402], *got;
+    oe_doc_init(&d);
+    memset(t, 'a', 200);
+    t[200] = '\n';
+    t[201] = 0;
+    load(&d, t);
+    CHECK(oe_find_count(&d, "a", 0, 150, &idx) == 200 && idx == 151);
+    CHECK(oe_find_count(&d, "a", OE_F_PAT, 0, &idx) == 200 && idx == 1);
+    CHECK(oe_replace_all(&d, "a", 0, "aa") == 200);
+    got = whole(&d);
+    n = got ? (long)strlen(got) : 0;
+    CHECK(n == 401);
+    memset(t, 'a', 400);
+    t[400] = '\n';
+    t[401] = 0;
+    CHECK(got && strcmp(got, t) == 0);
+    free(got);
+    CHECK(oe_doc_undo(&d));
+    CHECK(oe_find_count(&d, "a", 0, 0, &idx) == 200);
+    CHECK(oe_replace_all(&d, "a", 0, "b") == 200);
+    CHECK(oe_find_count(&d, "b", 0, 0, &idx) == 200);
+    oe_doc_free(&d);
+}
+
 int main(int argc, char **argv)
 {
     test_buf();
@@ -494,6 +524,7 @@ int main(int argc, char **argv)
     test_pat();
     test_find();
     test_find_pat_cost();
+    test_find_long_line();
     test_syntax(argc > 1 ? argv[1] : "kinds");
     printf("%d checks, %d failed\n", checks, fails);
     return fails ? 1 : 0;
