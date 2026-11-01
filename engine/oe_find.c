@@ -36,9 +36,10 @@ static long in_line(const char *s, long n, long from, const char *what, int wn, 
     return -1;
 }
 
-int oe_find_line(oe_doc *d, const char *what, int flags, long line, long *starts, long *ends, int max)
+/* Up to max matches on a line from offset from on. */
+static int find_from(oe_doc *d, const char *what, int flags, long line, long from, long *starts, long *ends, int max)
 {
-    long st = oe_buf_line_start(&d->buf, line), n = oe_buf_line_len(&d->buf, line), from = 0, a, e;
+    long st = oe_buf_line_start(&d->buf, line), n = oe_buf_line_len(&d->buf, line), a, e;
     const char *s;
     int wn = (int)strlen(what), k = 0;
     if (!wn || line < 0 || line >= oe_buf_lines(&d->buf))
@@ -51,6 +52,11 @@ int oe_find_line(oe_doc *d, const char *what, int flags, long line, long *starts
         from = e > a ? e : a + 1;
     }
     return k;
+}
+
+int oe_find_line(oe_doc *d, const char *what, int flags, long line, long *starts, long *ends, int max)
+{
+    return find_from(d, what, flags, line, 0, starts, ends, max);
 }
 
 int oe_find(oe_doc *d, const char *what, int flags, long from, int backward, long *a, long *b)
@@ -104,13 +110,19 @@ long oe_find_count(oe_doc *d, const char *what, int flags, long at, long *index)
     long st[64], en[64];
     *index = 0;
     for (l = 0; l < lines; l++) {
-        long base = oe_buf_line_start(&d->buf, l);
-        int n = oe_find_line(d, what, flags, l, st, en, 64), i;
-        for (i = 0; i < n; i++) {
-            count++;
-            if (base + st[i] == at)
-                *index = count;
-        }
+        long base = oe_buf_line_start(&d->buf, l), from = 0;
+        int n, i;
+        /* 64 at a time, as many times as the line needs. */
+        do {
+            n = find_from(d, what, flags, l, from, st, en, 64);
+            for (i = 0; i < n; i++) {
+                count++;
+                if (base + st[i] == at)
+                    *index = count;
+            }
+            if (n)
+                from = en[n - 1] > st[n - 1] ? en[n - 1] : st[n - 1] + 1;
+        } while (n == 64);
     }
     return count;
 }
@@ -125,17 +137,14 @@ long oe_replace_all(oe_doc *d, const char *what, int flags, const char *with)
     lines = oe_buf_lines(&d->buf);
     for (l = 0; l < lines; l++) {
         int n, i;
-        /* A long line may hold more than 64: go round until none are left
-         * beyond what was replaced. */
+        /* A long line may hold more than 64: go round, searching on from
+         * past the last replacement (the replacement may hold the text
+         * searched for, which mustn't be found again). */
         long skip = 0;
         for (;;) {
             long base = oe_buf_line_start(&d->buf, l), shift = 0;
-            n = oe_find_line(d, what, flags, l, st, en, 64);
-            for (i = 0; i < n && st[i] < skip; i++)
-                ;
-            if (i >= n)
-                break;
-            for (; i < n; i++) {
+            n = find_from(d, what, flags, l, skip, st, en, 64);
+            for (i = 0; i < n; i++) {
                 long a = base + st[i] + shift, b = base + en[i] + shift;
                 oe_doc_select(d, a, b);
                 if (!oe_doc_insert(d, with, wn, 0)) {
