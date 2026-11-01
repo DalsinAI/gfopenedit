@@ -715,6 +715,7 @@ void oe_count_hits(void)
     oe_doc *d = cur_doc();
     static char buf[32];            /* GadTools keeps the pointer, not a copy */
     long a, b;
+    A.count_due = 0;
     if (!A.g_count || !d)
         return;
     A.hit_total = A.hit_index = 0;
