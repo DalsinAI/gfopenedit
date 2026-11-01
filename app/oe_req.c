@@ -1,4 +1,4 @@
-/* oe_req: OpenEdit's small windows: a question with a field (Go to line),
+/* oe_req: GFOpenEdit's small windows: a question with a field (Go to line),
  * the unsaved-changes list, and Settings. GadTools, on the window's screen,
  * in the theme's font; each runs until answered.
  *
@@ -238,7 +238,7 @@ int oe_req_unsaved(int *ticked)
     g = mk(BUTTON_KIND, g, &ng, G_CANCEL, "Cancel", pad, y, b1, bh, 0, TAG_DONE);
     g = mk(BUTTON_KIND, g, &ng, G_NOSAVE, "Don't save", w - pad - b3 - 8 - b2, y, b2, bh, 0, TAG_DONE);
     g = mk(BUTTON_KIND, g, &ng, G_SAVE, "Save ticked", w - pad - b3, y, b3, bh, 0, TAG_DONE);
-    if (!g || !(win = open_req("OpenEdit", w, h, glist, BUTTONIDCMP | CHECKBOXIDCMP))) {
+    if (!g || !(win = open_req("GFOpenEdit", w, h, glist, BUTTONIDCMP | CHECKBOXIDCMP))) {
         FreeGadgets(glist);
         return 0;
     }
@@ -281,7 +281,7 @@ int oe_req_unsaved(int *ticked)
 /* ---- settings ---- */
 
 /* The classes that have a colour, in the order of OE_C_COMMAND on. A cycle
- * gadget rather than a list: OpenLook drew the list's rows blank. */
+ * gadget rather than a list: GFOpenLook drew the list's rows blank. */
 static const char *const class_names[OE_C_COUNT] = {
     "Commands", "Keywords (IF, DO, END)", "Strings", "Variables", "Numbers", "Labels", "Comments", NULL
 };
@@ -380,7 +380,7 @@ int oe_req_settings(void)
            0, TAG_DONE);
     g = mk(BUTTON_KIND, g, &ng, G_SAVE, "Save", w - pad - (tw("Save") + 30), y, tw("Save") + 30, bh, 0, TAG_DONE);
     h = y + bh + pad;
-    if (!g || !(win = open_req("OpenEdit settings", w, h, glist,
+    if (!g || !(win = open_req("GFOpenEdit settings", w, h, glist,
                                BUTTONIDCMP | CHECKBOXIDCMP | CYCLEIDCMP | SLIDERIDCMP | INTEGERIDCMP))) {
         FreeGadgets(glist);
         return 0;

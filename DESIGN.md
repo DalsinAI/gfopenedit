@@ -1,26 +1,26 @@
-# OpenEdit design, v0.1
+# GFOpenEdit design, v0.1
 
 Team, 6 October 2026. Design only; nothing is built until the screens are approved.
 Mockup: in the Team's design archive.
 
 ## What it is
 
-A plain text editor for OpenUp that replaces TextEdit and Ed for everyday editing:
+A plain text editor for GFOpenUp that replaces TextEdit and Ed for everyday editing:
 S:Startup-Sequence, ARexx scripts, readmes and source code. It is not a word
-processor (that is OpenWrite, a separate project).
+processor (that is GFOpenWrite, a separate project).
 
-Target: 68040 with FPU, AmigaOS 3.2.3, OpenUp, no OpenGPU. Works from 640x256 AGA
-in 16 colours with Topaz 8 up to 1920x1080 OpenRTG.
+Target: 68040 with FPU, AmigaOS 3.2.3, GFOpenUp, no GFOpenGPU. Works from 640x256 AGA
+in 16 colours with Topaz 8 up to 1920x1080 GFOpenRTG.
 
 ## Window
 
 - The window first opens at 800 x 600, centred in the screen's free area (below
-  the title bar and beside OpenDock), and never larger than that area, so on a
+  the title bar and beside GFOpenDock), and never larger than that area, so on a
   screen smaller than 800 x 600 it is the whole free area (the rule for every
-  Open app, 10 October 2026, as in OpenFiles 0.2.3). A size the user gives it
-  is kept: OpenWindows remembers it. OpenEdit has no toolbar, so the other half
+  GFOpen app, 10 October 2026, as in GFOpenFiles 0.2.3). A size the user gives it
+  is kept: GFOpenWindows remembers it. GFOpenEdit has no toolbar, so the other half
   of that rule (toolbars start with icons only) does not apply.
-- One window, a tab per file (the OpenFiles model). A dot on a tab marks unsaved
+- One window, a tab per file (the GFOpenFiles model). A dot on a tab marks unsaved
   changes. Opening a file that is already open goes to its tab. Dragging a tab out
   into its own window comes in phase 2.
 - Menus: Project, Edit, Search, View, Tools, Settings.
@@ -35,9 +35,9 @@ in 16 colours with Topaz 8 up to 1920x1080 OpenRTG.
 
 - GadTools only: the window, menus, find bar and settings use gadtools.library
   from AmigaOS 3.2.3. No MUI, no BOOPSI class libraries, no TextEditor.mcc.
-  Nothing to install beyond the OS. With OpenUp present, OpenLook gives the
-  gadgets the theme's look (linked in from OpenGadTools, not a separate library);
-  without it OpenEdit runs with the plain GadTools look.
+  Nothing to install beyond the OS. With GFOpenUp present, GFOpenLook gives the
+  gadgets the theme's look (linked in from GFOpenGadTools, not a separate library);
+  without it GFOpenEdit runs with the plain GadTools look.
 - The text area is our own code drawing into the window, since GadTools has no
   multi-line text gadget.
 - Buffer: a gap buffer per file plus a line-start index; undo as a list of
@@ -47,23 +47,23 @@ in 16 colours with Topaz 8 up to 1920x1080 OpenRTG.
   `ScrollRaster()`. Colouring is computed per line with a carried state (inside a
   comment or string), so an edit recolours from the changed line until the state
   settles.
-- The text area is written so it can later become an OpenGadTools gadget, for the
-  OpenFiles preview and other apps.
+- The text area is written so it can later become a GFOpenGadTools gadget, for the
+  GFOpenFiles preview and other apps.
 
 ## Colours
 
 - The kind is picked from the file's path and name, then its first line (`#!`,
   `/* ARexx */`, `@database`). Phase 1 uses the name patterns in each kind file;
-  asking OpenTypes first comes once OpenTypes offers a lookup other programs can
+  asking GFOpenTypes first comes once GFOpenTypes offers a lookup other programs can
   call.
-- Kinds are small text files in `ENVARC:OpenEdit/Kinds/` (keywords, comment marks,
+- Kinds are small text files in `ENVARC:GFOpenEdit/Kinds/` (keywords, comment marks,
   string marks, number and variable rules). First set: AmigaDOS script, ARexx, C,
   Assembler (Devpac), AmigaGuide, HTML, Lua, Makefile. Adding a kind needs no
   rebuild.
 - Seven pens: commands, keywords, strings, variables, numbers, labels, comments.
   Pens are obtained with `ObtainBestPen()`; on a screen with too few free pens
   they fold onto bold and plain text.
-- Colour schemes: Classic first; Open 4 follows the OpenLook "Open 4" theme.
+- Colour schemes: Classic first; Open 4 follows the GFOpenLook "Open 4" theme.
 
 ## Characters and line ends
 
@@ -85,24 +85,24 @@ Closing a window with changes asks once for all tabs.
 Template: `FILES/M,LINE/N,WAIT/S,READONLY/S,NEW/S,PUBSCREEN/K`.
 
 - Single copy: a second start hands its files to the running copy through its
-  public port `OpenEdit` and exits (or, with WAIT, waits for those tabs to close).
+  public port `GFOpenEdit` and exits (or, with WAIT, waits for those tabs to close).
   A start from the Shell with no copy running starts one in the background.
 - `WAIT` lets scripts and tools that call `$EDITOR` keep working.
-- ARexx port `OPENEDIT`: OPEN, NEW, FRONT, SAVE, SAVEAS, CLOSE, TAB, GOTO, FIND,
+- ARexx port `GFOPENEDIT`: OPEN, NEW, FRONT, SAVE, SAVEAS, CLOSE, TAB, GOTO, FIND,
   REPLACEALL, INSERT, GETTEXT, GETLINE, GETFILE, GETPOS, QUIT.
 
 ## Settings
 
 Colour scheme, font (fixed-width by default), tab width and insert-spaces, line
 numbers, current line, kind colours. Save writes ENVARC:, Use writes ENV:, as in
-every OpenPrefs editor.
+every GFOpenPrefs editor.
 
-## Fitting into OpenUp
+## Fitting into GFOpenUp
 
-- Installed as `C:OpenEdit` (with a Tools icon). OpenUp sets
-  `ENV:EDITOR` to `C:OpenEdit WAIT` and points OpenTypes text kinds at OpenEdit.
+- Installed as `C:GFOpenEdit` (with a Tools icon). GFOpenUp sets
+  `ENV:EDITOR` to `C:GFOpenEdit WAIT` and points GFOpenTypes text kinds at GFOpenEdit.
 - C:Ed and SYS:Tools/TextEdit stay installed as the fallback.
-- Packaging into OpenUp goes through the OpenUp release owner.
+- Packaging into GFOpenUp goes through the GFOpenUp release owner.
 
 ## Phases
 
@@ -113,7 +113,7 @@ every OpenPrefs editor.
 
 ## Decisions (recommended options first)
 
-1. Replace by default, keep the old ones (ENV:EDITOR + OpenTypes; C:Ed and
+1. Replace by default, keep the old ones (ENV:EDITOR + GFOpenTypes; C:Ed and
    TextEdit stay). Recommended.
 2. GadTools only, nothing else to install; our own text area. Recommended.
 3. Tabs in one window, one copy running. Recommended.

@@ -1,4 +1,4 @@
-/* OpenEdit host tests: the engine (buffer, document, undo, find, patterns,
+/* GFOpenEdit host tests: the engine (buffer, document, undo, find, patterns,
  * colour kinds). MIT, Copyright (c) 2026 AmigaChrome Team. */
 #include "oe_buf.h"
 #include "oe_doc.h"
@@ -323,7 +323,7 @@ static void test_pat(void)
     CHECK(oe_pat_whole("[~a-c]x", "dx", 0) && !oe_pat_whole("[~a-c]x", "bx", 0));
     CHECK(oe_pat_whole("ab(s|%)", "ab", 0) && oe_pat_whole("ab(s|%)", "abs", 0));
     CHECK(oe_pat_whole("'#'?", "#?", 0) && !oe_pat_whole("'#'?", "#x", 0));
-    CHECK(oe_pat_whole("*.guide", "OpenEdit.guide", 1));
+    CHECK(oe_pat_whole("*.guide", "GFOpenEdit.guide", 1));
     CHECK(oe_pat_whole("#(ab)c", "ababc", 0) && oe_pat_whole("#(ab)c", "c", 0));
     e = oe_pat_at("G#?s", 4, s + 7, s + strlen(s), 1);
     CHECK(e == s + strlen(s));          /* longest */
@@ -409,7 +409,7 @@ static void test_syntax(const char *kdir)
     CHECK(oe_kind_pick(kinds, NK, "RAM:x", "/* hello */", 11) == 1);
     CHECK(oe_kind_pick(kinds, NK, "Work:src/main.c", "", 0) == 2);
     CHECK(oe_kind_pick(kinds, NK, "Work:startup.s", "", 0) == 3);
-    CHECK(oe_kind_pick(kinds, NK, "Help:OpenEdit.guide", "", 0) == 4);
+    CHECK(oe_kind_pick(kinds, NK, "Help:GFOpenEdit.guide", "", 0) == 4);
     CHECK(oe_kind_pick(kinds, NK, "Work:Makefile", "", 0) == 7);
     CHECK(oe_kind_pick(kinds, NK, "Work:readme", "Hello", 5) == -1);
 

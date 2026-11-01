@@ -1,5 +1,5 @@
-/* oe_prefs: OpenEdit's settings, in ENV:OpenEdit/Settings (Use) and
- * ENVARC:OpenEdit/Settings (Save), one setting a line:
+/* oe_prefs: GFOpenEdit's settings, in ENV:GFOpenEdit/Settings (Use) and
+ * ENVARC:GFOpenEdit/Settings (Save), one setting a line:
  *   font topaz.font 8          (no font line: the system's text font)
  *   tabs 8
  *   spaces off
@@ -102,8 +102,8 @@ void oe_prefs_load(oe_prefs *p)
 {
     char text[2048], *s, *e;
     oe_prefs_default(p);
-    if (!oe_read_small("ENV:OpenEdit/Settings", text, sizeof text) &&
-        !oe_read_small("ENVARC:OpenEdit/Settings", text, sizeof text))
+    if (!oe_read_small("ENV:GFOpenEdit/Settings", text, sizeof text) &&
+        !oe_read_small("ENVARC:GFOpenEdit/Settings", text, sizeof text))
         return;
     for (s = text; *s; s = *e ? e + 1 : e) {
         char *v;

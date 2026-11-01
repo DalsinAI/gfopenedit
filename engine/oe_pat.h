@@ -1,7 +1,7 @@
 /* oe_pat: AmigaDOS-style patterns, matched against text in memory.
  *
  * dos.library's MatchPattern only says whether a whole string matches; find
- * needs where a match starts and ends inside a line, so OpenEdit has its own
+ * needs where a match starts and ends inside a line, so GFOpenEdit has its own
  * matcher for the same syntax:
  *   ?        any one character
  *   #x       any number of x (x is a character, ?, a [class] or a (group))

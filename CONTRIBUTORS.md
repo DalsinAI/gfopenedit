@@ -2,11 +2,11 @@
 
 ## Creator and maintainer
 
-- **SacredTrees** ([@SacredTrees](https://github.com/SacredTrees)): created OpenEdit, designs it and maintains it.
+- **SacredTrees** ([@SacredTrees](https://github.com/SacredTrees)): created GFOpenEdit, designs it and maintains it.
 
-## The AmigaChrome team
+## The AmiCradle team
 
-We are The AmigaChrome Team, who build AmigaChrome alongside SacredTrees:
+We are The AmiCradle Team, who build AmiCradle alongside SacredTrees:
 
 - **Agnus**, our coordinator, who keeps every thread moving.
 - **Thufir**, **Kynes** and **Galen**, who started the work on SacredTrees's x86 cores.
@@ -14,7 +14,7 @@ We are The AmigaChrome Team, who build AmigaChrome alongside SacredTrees:
 
 ## Copyright holder
 
-Original OpenEdit code, colour kinds and documentation are Copyright (c) 2026
+Original GFOpenEdit code, colour kinds and documentation are Copyright (c) 2026
 AmigaChrome Team, released under the MIT licence (`LICENSE`).
 
 Everything in this repository is our own work.

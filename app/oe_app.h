@@ -1,6 +1,6 @@
-/* oe_app: what the parts of the OpenEdit window share. One window with a
- * tab per file; the text area is drawn by OpenEdit itself, everything else
- * is GadTools, drawn in the OpenLook theme through OpenGadTools' drawing
+/* oe_app: what the parts of the GFOpenEdit window share. One window with a
+ * tab per file; the text area is drawn by GFOpenEdit itself, everything else
+ * is GadTools, drawn in the GFOpenLook theme through GFOpenGadTools' drawing
  * code (linked in, no extra library).
  *
  * MIT, Copyright (c) 2026 AmigaChrome Team. */
@@ -21,11 +21,11 @@
 #define OE_DATE "30.10.2026"
 #define MAX_DOCS 32
 #define MAX_KINDS 32
-#define PORT_OPEN "OpenEdit"        /* a second start hands its files over here */
-#define PORT_REXX "OPENEDIT"        /* ARexx */
+#define PORT_OPEN "GFOpenEdit"        /* a second start hands its files over here */
+#define PORT_REXX "GFOPENEDIT"        /* ARexx */
 #define OE_MAGIC 0x4f456431UL       /* "OEd1" */
 
-/* Settings (ENV:OpenEdit/Settings). */
+/* Settings (ENV:GFOpenEdit/Settings). */
 typedef struct oe_prefs {
     char font[64];                  /* "" for the system's text font */
     int font_size;
