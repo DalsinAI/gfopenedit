@@ -2,7 +2,7 @@
 # GFOpenEdit for OS 3.2 with the os32-gcc16 stove (m68k-amigaos-gcc 16, NDK 3.2), and
 # GFOpenGadTools' sources beside it. Built for the 68040, integer maths only.
 #   ./build.sh [OUT_DIR]           (default build/os3)
-#   OGT=path/to/opengadtools ./build.sh
+#   OGT=path/to/gfopengadtools ./build.sh
 # MIT, Copyright (c) 2026 AmiCradle Team.
 # The compiler: OS32_GCC16, else STOVE, else ~/AmiCradle/stoves/os32-gcc16. It stops when given an older GCC
 # (the os32 stove's GCC 6.5.0b merges a word clear and the long clear after it into one clr.l at -O2) and builds
@@ -13,7 +13,7 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 # mathieee libraries), not libm881, so one build runs on every 68040.
 SPECS="-specs=$HERE/toolchain/m68k-soft-m68040.specs"
 STOVE=${OS32_GCC16:-${STOVE:-$HOME/AmiCradle/stoves/os32-gcc16}}
-OGT=${OGT:-$HERE/../opengadtools}
+OGT=${OGT:-$HERE/../gfopengadtools}
 CC="$STOVE/prefix/bin/m68k-amigaos-gcc"
 GCCV=$("$CC" -dumpversion 2>/dev/null || echo 0)
 [ "${GCCV%%.*}" -ge 16 ] 2>/dev/null || { echo "$CC is GCC $GCCV: this needs GCC 16 (the os32-gcc16 stove; set OS32_GCC16)"; exit 2; }

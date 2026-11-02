@@ -17,7 +17,7 @@ screen), instead of filling the screen. A size you give it is kept.
 With the os32 stove and GFOpenGadTools checked out beside this repo:
 
     ./build.sh                    # build/os3/GFOpenEdit and build/os3/Kinds/
-    OGT=path/to/opengadtools ./build.sh
+    OGT=path/to/gfopengadtools ./build.sh
 
 The text engine (gap buffer, undo, find, patterns, colour kinds) is plain C and
 has host tests: `tests/host/run.sh`.
