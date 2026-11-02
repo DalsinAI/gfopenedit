@@ -101,7 +101,7 @@ static long now_secs(void)
 /* ---- the theme ---- */
 
 /* The theme, light or dark, the accent and Lite as GFOpenPrefs Look sets them
- * (opengadtools' ogt_look_load, which every GFOpen app shares). */
+ * (gfopengadtools' ogt_look_load, which every GFOpen app shares). */
 static int load_theme(int *mode)
 {
     ogt_look_load(&A.theme, mode);
