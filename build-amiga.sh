@@ -18,7 +18,15 @@ tree() {
     done
     echo "$1"
 }
-pick() { [ -d "$up/DalsinAI__$1" ] && tree "$up/DalsinAI__$1" "$1" || echo "$up/$1"; }
+# pick REPO: a checkout with files beside this one, else DalsinAI/REPO's main fetched from GitHub
+# (a Cradle job checks out this repository alone).
+pick() {
+    if [ -d "$up/DalsinAI__$1" ]; then d=$(tree "$up/DalsinAI__$1" "$1"); [ -n "$(ls "$d" 2>/dev/null)" ] && { echo "$d"; return; }; fi
+    [ -n "$(ls "$up/$1" 2>/dev/null)" ] && { echo "$up/$1"; return; }
+    git clone -q --depth 1 "${AMICRADLE_GIT_BASE:-https://github.com/}DalsinAI/$1" "$TMP/git-$1" >&2 &&
+        { echo "build-amiga.sh: $1 at $(git -C "$TMP/git-$1" rev-parse --short HEAD) (main)" >&2; echo "$TMP/git-$1"; return; }
+    echo "$up/$1"
+}
 OUT=${OUT:-$HERE/build/os3}
 OS32_GCC16=${OS32_GCC16:-${STOVE:-$HOME/AmiCradle/stoves/os32-gcc16}}
 export OS32_GCC16
