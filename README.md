@@ -54,6 +54,12 @@ Port `GFOPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
 | `INSERT text` | types text at the caret |
 | `GETTEXT`, `GETLINE [n]`, `GETFILE`, `GETPOS` | answers the text, a line, the path, or "line col" |
 | `QUIT [FORCE]` | quits |
+| `ACTIVATE` | the same as `FRONT` |
+| `VERSION` | answers "GFOpenEdit 0.1.2" |
+| `HELP [command]` | answers the commands, or one command and its arguments |
+| `FAULT code` | answers the text of a DOS error code |
+
+`ACTIVATE`, `VERSION`, `HELP` and `FAULT` are the commands every Open app's port has. `Rexx/LineCount.rexx` is an example.
 
 ## Settings
 
