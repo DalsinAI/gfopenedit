@@ -27,4 +27,7 @@ FLAGS="-noixemul -m68040 $SPECS -std=gnu99 -Wall -Werror -O2 -fno-tree-loop-dist
     "$HERE/engine/oe_syntax.c" \
     "$OGT/lib/ogt_theme.c" "$OGT/lib/ogt_draw.c" "$OGT/lib/ogt_font.c" "$OGT/lib/ogt_look.c"
 cp "$HERE"/kinds/*.kind "$OUT/Kinds/"
+# the ARexx example (README: ARexx)
+mkdir -p "$OUT/Rexx"
+cp "$HERE"/Rexx/*.rexx "$OUT/Rexx/"
 echo "$OUT/GFOpenEdit ($(wc -c < "$OUT/GFOpenEdit") bytes)"

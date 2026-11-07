@@ -5,6 +5,12 @@
  *   FIND text            REPLACEALL text with          INSERT text
  *   GETTEXT              GETLINE [n]    GETFILE        GETPOS
  *   FRONT                QUIT [FORCE]
+ *   ACTIVATE             VERSION        HELP [command] FAULT code
+ *
+ * ACTIVATE, VERSION, HELP and FAULT are the commands every Open app has
+ * (gfopensdk arexx/apphost.h): ACTIVATE is FRONT, VERSION gives
+ * "GFOpenEdit 0.1.2", HELP the commands or one command's arguments, FAULT
+ * the text of a DOS error code.
  *
  * Text with spaces goes in quotes. Results come back in RESULT (OPTIONS
  * RESULTS); a command that can't be done returns 10, FIND that finds
@@ -18,6 +24,7 @@
 #include <rexx/errors.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#include <proto/dos.h>
 /* The base is ours, typed as the NDK has it whichever way its proto does. */
 #define __NOLIBBASE__
 #include <proto/rexxsyslib.h>
@@ -101,6 +108,15 @@ static void after_change(void)
     oe_draw_all();
 }
 
+/* HELP's answers: each command and its arguments */
+static const char *const help_text[][2] = {
+    { "OPEN", "FILE [LINE n]" }, { "NEW", "" }, { "SAVE", "" }, { "SAVEAS", "FILE" },
+    { "CLOSE", "[FORCE]" }, { "GOTO", "LINE [COL]" }, { "TAB", "N" }, { "FIND", "TEXT" },
+    { "REPLACEALL", "TEXT WITH" }, { "INSERT", "TEXT" }, { "GETTEXT", "" }, { "GETLINE", "[N]" },
+    { "GETFILE", "" }, { "GETPOS", "" }, { "FRONT", "" }, { "QUIT", "[FORCE]" },
+    { "ACTIVATE", "" }, { "VERSION", "" }, { "HELP", "[COMMAND]" }, { "FAULT", "CODE" },
+};
+
 /* Runs one command: the return code, and *res a malloc'd result or NULL. */
 static long run(char *cmd, char **res, long *resn)
 {
@@ -123,7 +139,7 @@ static long run(char *cmd, char **res, long *resn)
     }
     if (!oe_stricmp(c, "NEW"))
         return oe_new_tab(NULL, 0, OE_OPEN_NEW, NULL) ? 0 : RC_ERROR;
-    if (!oe_stricmp(c, "FRONT")) {
+    if (!oe_stricmp(c, "FRONT") || !oe_stricmp(c, "ACTIVATE")) {
         WindowToFront(A.win);
         ScreenToFront(A.scr);
         ActivateWindow(A.win);
@@ -136,6 +152,37 @@ static long run(char *cmd, char **res, long *resn)
                 oe_doc_mark_saved(&A.tabs[i]->d);
         }
         A.quit = 1;
+        return 0;
+    }
+    if (!oe_stricmp(c, "VERSION")) {
+        if ((*res = malloc(48)))
+            *resn = sprintf(*res, "GFOpenEdit %s", OE_VERSION);
+        return 0;
+    }
+    if (!oe_stricmp(c, "HELP")) {
+        size_t i, n = sizeof help_text / sizeof help_text[0];
+        if ((a = arg(&s))) {
+            for (i = 0; i < n; i++)
+                if (!oe_stricmp(a, help_text[i][0])) {
+                    if ((*res = malloc(64)))
+                        *resn = sprintf(*res, "%s%s%s", help_text[i][0], *help_text[i][1] ? " " : "", help_text[i][1]);
+                    return 0;
+                }
+            return RC_ERROR;
+        }
+        if ((*res = malloc(n * 12 + 1))) {
+            char *p = *res;
+            for (i = 0; i < n; i++)
+                p += sprintf(p, "%s%s", i ? " " : "", help_text[i][0]);
+            *resn = p - *res;
+        }
+        return 0;
+    }
+    if (!oe_stricmp(c, "FAULT")) {
+        if (!(a = arg(&s)) || !(*res = malloc(100)))
+            return RC_ERROR;
+        Fault(atol(a), NULL, (STRPTR)*res, 100);
+        *resn = strlen(*res);
         return 0;
     }
     if (!d)
