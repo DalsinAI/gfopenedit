@@ -24,10 +24,10 @@ CALL want 'INSERT "hello world"', 0
 CALL want 'FIND nosuchtext', 5
 CALL want 'GOTO 0', 10
 CALL want 'OPEN', 10
-/* these would have asked: now they answer at once */
-CALL want 'OPEN RAM:no/such/file.txt', 10
+CALL want 'TAB 99', 10
 CALL want 'LASTERROR', 0
 SAY '     LASTERROR:' res
+/* these would have asked: now they answer at once */
 CALL want 'SAVE', 10                        /* Untitled: no file requester */
 CALL want 'CLOSE', 5                        /* unsaved: no Save? requester */
 CALL want 'QUIT', 5                         /* unsaved: stays */
