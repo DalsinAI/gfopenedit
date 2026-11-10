@@ -53,7 +53,7 @@ int oe_rexx_quiet(const char *text)
     if (!A.rexx_busy)
         return 0;
     if (!A.rexx_noted) {
-        snprintf(A.rexx_error, sizeof A.rexx_error, "%s", text ? text : "");
+        snprintf(A.rexx_noting, sizeof A.rexx_noting, "%s", text ? text : "");
         A.rexx_noted = 1;
     }
     return 1;
@@ -64,7 +64,7 @@ static long fail(long rc, const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    vsnprintf(A.rexx_error, sizeof A.rexx_error, fmt, ap);
+    vsnprintf(A.rexx_noting, sizeof A.rexx_noting, fmt, ap);
     va_end(ap);
     A.rexx_noted = 1;
     return rc;
@@ -371,11 +371,15 @@ void oe_rexx_news(void)
             first[k] = 0;
             reading = !oe_stricmp(first, "LASTERROR");
             A.rexx_busy = 1;
-            A.rexx_noted = reading;
+            A.rexx_noted = 0;
             rc = run(cmd, &res, &resn);
             A.rexx_busy = 0;
-            if (!reading && rc && !A.rexx_noted)   /* LASTERROR keeps the last failure's text */
-                snprintf(A.rexx_error, sizeof A.rexx_error, "%.40s: RC %ld", w, rc);
+            if (!reading && rc) {            /* LASTERROR keeps the last failure's text */
+                if (A.rexx_noted)
+                    memcpy(A.rexx_error, A.rexx_noting, sizeof A.rexx_error);
+                else
+                    snprintf(A.rexx_error, sizeof A.rexx_error, "%.40s: RC %ld", w, rc);
+            }
         }
         m->rm_Result1 = rc;
         m->rm_Result2 = 0;

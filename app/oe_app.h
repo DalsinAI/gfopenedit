@@ -105,6 +105,7 @@ typedef struct oe_app {
     int rexx_busy;                  /* an ARexx command runs: no requesters */
     int rexx_noted;                 /* rexx_error has this command's text */
     char rexx_error[256];           /* LASTERROR's answer */
+    char rexx_noting[256];          /* this command's text, kept if it fails */
 } oe_app;
 
 extern oe_app A;
