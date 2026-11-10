@@ -102,6 +102,10 @@ typedef struct oe_app {
     long last_click;
     struct MsgPort *open_port, *rexx_port;
     int quit;
+    int rexx_busy;                  /* an ARexx command runs: no requesters */
+    int rexx_noted;                 /* rexx_error has this command's text */
+    char rexx_error[256];           /* LASTERROR's answer */
+    char rexx_noting[256];          /* this command's text, kept if it fails */
 } oe_app;
 
 extern oe_app A;
@@ -165,6 +169,9 @@ char *oe_load_text(const char *path, long max, long *n);
 int oe_rexx_open(void);
 void oe_rexx_close(void);
 void oe_rexx_news(void);
+/* during an ARexx command: keeps text for LASTERROR and gives 1, so the
+ * caller shows no requester (as if Cancel was pressed); otherwise 0 */
+int oe_rexx_quiet(const char *text);
 
 /* The main window's gadgets. */
 enum { G_SCROLL = 1, G_FIND, G_PREV, G_NEXT, G_COUNT, G_CASE, G_WORD, G_PAT, G_CLOSE, G_REPL, G_REPL1, G_REPLALL,
