@@ -178,6 +178,8 @@ int oe_ask_file(int save, const char *title, char *path, int size)
     struct FileRequester *fr;
     char drawer[OE_PATH_MAX], file[108];
     int ok = 0;
+    if (oe_rexx_quiet(title))
+        return 0;                       /* an ARexx command: as Cancel */
     if (!AslBase && !(AslBase = OpenLibrary((CONST_STRPTR)"asl.library", 38)))
         return 0;
     drawer[0] = file[0] = 0;

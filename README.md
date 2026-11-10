@@ -46,20 +46,28 @@ Port `GFOPENEDIT`. With `OPTIONS RESULTS`, GET commands answer in `RESULT`.
 | `NEW` | a new Untitled tab |
 | `FRONT` | brings the window to the front |
 | `SAVE`, `SAVEAS file` | saves the current tab |
-| `CLOSE [FORCE]` | closes the current tab |
+| `CLOSE [FORCE]` | closes the current tab (RC 5, kept, when it has unsaved changes and no FORCE) |
 | `TAB n` | goes to tab n |
 | `GOTO line [col]` | moves the caret |
 | `FIND text` | finds the next match (RC 5 when none) |
 | `REPLACEALL text with` | replaces all, answers the count |
 | `INSERT text` | types text at the caret |
 | `GETTEXT`, `GETLINE [n]`, `GETFILE`, `GETPOS` | answers the text, a line, the path, or "line col" |
-| `QUIT [FORCE]` | quits |
+| `QUIT [FORCE]` | quits (RC 5, stays, when there are unsaved changes and no FORCE) |
 | `ACTIVATE` | the same as `FRONT` |
+| `DEACTIVATE` | RC 5: GFOpenEdit has no icon to go to |
 | `VERSION` | answers "GFOpenEdit 0.1.2" |
 | `HELP [command]` | answers the commands, or one command and its arguments |
 | `FAULT code` | answers the text of a DOS error code |
+| `LASTERROR` | answers why the last command that failed failed |
 
-`ACTIVATE`, `VERSION`, `HELP` and `FAULT` are the commands every Open app's port has. `Rexx/LineCount.rexx` is an example.
+`ACTIVATE`, `DEACTIVATE`, `VERSION`, `HELP`, `FAULT` and `LASTERROR` are the commands every Open app's port has.
+
+Return codes (as every Open app's port): 0 done; 5 not done, nothing wrong (FIND
+finds nothing, unsaved changes kept); 10 an error (a missing argument, a file that
+can't be opened or saved); 20 an unknown command. No command shows a requester:
+what one would have said is in `LASTERROR`. `Rexx/LineCount.rexx` is an example,
+and `tests/arexx.rexx` checks the port.
 
 ## Settings
 

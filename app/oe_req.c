@@ -116,6 +116,8 @@ static void sleep_main(int on)
 int oe_req_three(const char *title, const char *text, const char *gads)
 {
     struct EasyStruct es;
+    if (oe_rexx_quiet(text))
+        return 0;                       /* the rightmost button: Cancel, or OK */
     es.es_StructSize = sizeof es;
     es.es_Flags = 0;
     es.es_Title = (UBYTE *)title;
@@ -130,6 +132,8 @@ int oe_req_string(const char *title, const char *question, const char *ok, char 
     struct NewGadget ng;
     struct Window *win;
     int fh = A.fh, bh = fh + 6, pad = 12, w = 340, h, top, result = 0, done = 0, bw = tw(ok) + 24;
+    if (oe_rexx_quiet(question))
+        return 0;                       /* an ARexx command: as Cancel */
     top = A.scr->WBorTop + A.scr->Font->ta_YSize + 1 + pad;
     h = top + fh + 6 + bh + 10 + bh + pad;
     memset(&ng, 0, sizeof ng);
@@ -201,6 +205,8 @@ int oe_req_unsaved(int *ticked)
     char labels[MAX_TICKS][80], q[64];
     int which[MAX_TICKS], n = 0, i, fh = A.fh, bh = fh + 6, pad = 12, w = 400, h, top, rowh = fh + 6, result = 0, done = 0;
     int b1 = tw("Cancel") + 24, b2 = tw("Don't save") + 24, b3 = tw("Save ticked") + 24, y;
+    if (oe_rexx_quiet("There are unsaved changes"))
+        return 0;                       /* an ARexx command: as Cancel */
     for (i = 0; i < A.ntabs && n < MAX_TICKS; i++)
         if (oe_doc_modified(&A.tabs[i]->d)) {
             oe_doc *d = &A.tabs[i]->d;
