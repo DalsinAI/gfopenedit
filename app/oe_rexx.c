@@ -374,12 +374,8 @@ void oe_rexx_news(void)
             A.rexx_noted = reading;
             rc = run(cmd, &res, &resn);
             A.rexx_busy = 0;
-            if (!reading) {
-                if (!rc)
-                    A.rexx_error[0] = 0;
-                else if (!A.rexx_noted)
-                    snprintf(A.rexx_error, sizeof A.rexx_error, "%.40s: RC %ld", w, rc);
-            }
+            if (!reading && rc && !A.rexx_noted)   /* LASTERROR keeps the last failure's text */
+                snprintf(A.rexx_error, sizeof A.rexx_error, "%.40s: RC %ld", w, rc);
         }
         m->rm_Result1 = rc;
         m->rm_Result2 = 0;
